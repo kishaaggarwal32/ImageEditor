@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Editing</title>
+    <link rel="stylesheet" type="text/css" href="../static/index.css">
+</head>
+<body>
+    <h1>Image Editing</h1>
+
+    <!-- Image upload section -->
+    <h2>Upload Image</h2>
+    <input type="file" id="fileInput" accept="image/*">
+    <br><br>
+
+    <!-- Command selection -->
+    <h2>Choose Command</h2>
+    <select id="commandSelect">
+        <option value="grayscale">Grayscale</option>
+        <option value="blur">Blur</option>
+        <option value="cartoon">Cartoon</option>
+        <option value="edge">Edge</option>
+        <option value="sharpen">Sharpen</option>
+        <option value="rotate">Rotate</option>
+
+        <!-- Add more options as needed -->
+    </select>
+
+    <!-- Get Email ID -->
+    <h2>Enter Email ID</h2>
+    <input type="text" id="emailID" name="emailID">
+    <br><br>
+
+    <!-- Button to trigger image editing -->
+    <button onclick="editImage()">Edit Image</button>
+    <br><br>
+
+
+
+
+    <script>
+        function editImage() {
+            const fileInput = document.getElementById('fileInput');
+            const commandSelect = document.getElementById('commandSelect');
+            const editedImage = document.getElementById('editedImage');
+            const emailID = document.getElementById('emailID');
+
+
+            const file = fileInput.files[0];
+            if (!file) {
+                alert("Please select a file.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('command', commandSelect.value);
+            formData.append('emailID', emailID.value);
+
+            fetch("{{ url_for('face_editor') }}", {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error uploading file');
+                }
+                alert("Image uploaded successfully, Check your email for the processed image.");
+                return response.json();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+
+    </script>
+</body>
+</html>
